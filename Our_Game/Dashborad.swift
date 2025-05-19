@@ -12,11 +12,12 @@ struct DashboardView: View {
     @State private var showHelpSheet = false
     @State private var selectedPage = 0
     @State private var navigateToPrivateRoom = false
+    @State private var navigateToLeaderboard = false
+    @State private var navigateToMyCards = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color(#colorLiteral(red: 0.1000694409, green: 0.3843396008, blue: 0.5841861963, alpha: 1)),
@@ -28,7 +29,6 @@ struct DashboardView: View {
                 .ignoresSafeArea()
 
                 VStack {
-                    // MARK: - Top Stats
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 16) {
                             HStack(spacing: 12) {
@@ -83,17 +83,16 @@ struct DashboardView: View {
                         Spacer()
 
                         VStack(spacing: 5) {
-                            // الكارد والمتجر في نفس المستوى
                             HStack(spacing: 12) {
                                 Button(action: {
-                                    print("Winner tapped")
+                                    navigateToLeaderboard = true
                                 }) {
                                     Image("winner")
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                 }
                                 Button(action: {
-                                    print("Card tapped")
+                                    navigateToMyCards = true
                                 }) {
                                     Image("card_16271793")
                                         .resizable()
@@ -108,7 +107,6 @@ struct DashboardView: View {
                                 }
                             }
 
-                            // زر تعليم كيفية اللعب
                             VStack(spacing: 5) {
                                 Button(action: {
                                     print("Ghost tapped")
@@ -147,10 +145,8 @@ struct DashboardView: View {
                     .padding(.horizontal)
 
                     Spacer()
-                 
 
                     VStack(spacing: -19) {
-                        
                         Image("Preview")
                             .resizable()
                             .scaledToFit()
@@ -162,34 +158,43 @@ struct DashboardView: View {
                             matchManager.startMatchmaking()
                         }) {
                             ZStack {
-                                // Outline (black)
                                 Text("ابدأ اللعب !")
                                     .font(.title2)
                                     .bold()
                                     .foregroundColor(.black)
-                                    .offset(x: 1, y: 1) // يمكنك تعديل هذه القيم لزيادة سُمك الحدود
+                                    .offset(x: 1, y: 1)
 
                                 Text("ابدأ اللعب !")
                                     .font(.title2)
                                     .bold()
                                     .foregroundColor(.red)
                             }
-                                .frame(width: 330, height: 25)
-                                .padding()
-                                .background(
-                                    Capsule()
-                                        .fill(matchManager.authenticationState != .authenticated || matchManager.inGame ?
-                                              Color.gray : Color.yellow)
-                                )
+                            .frame(width: 330, height: 25)
+                            .padding()
+                            .background(
+                                Capsule()
+                                    .fill(matchManager.authenticationState != .authenticated || matchManager.inGame ?
+                                          Color.gray : Color.yellow)
+                            )
                         }
                         .disabled(matchManager.authenticationState != .authenticated || matchManager.inGame)
-                     
                     }
+
                     Text(matchManager.authenticationState.rawValue)
                         .font(.headline.weight(.bold))
                         .foregroundColor(.secondary)
-                    // ✅ NavigationLink hidden + button
+
                     NavigationLink(destination: ContentView1(), isActive: $navigateToPrivateRoom) {
+                        EmptyView()
+                    }
+                    .padding()
+
+                    NavigationLink(destination: LeaderBoard(), isActive: $navigateToLeaderboard) {
+                        EmptyView()
+                    }
+                    .padding()
+
+                    NavigationLink(destination: MyCardsView(), isActive: $navigateToMyCards) {
                         EmptyView()
                     }
                     .padding()
@@ -210,7 +215,6 @@ struct DashboardView: View {
                 }
                 .padding()
                 .overlay(
-                    // Popup Overlay
                     Group {
                         if showHelpSheet {
                             Color.black.opacity(0.4)

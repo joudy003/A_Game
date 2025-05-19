@@ -1,17 +1,12 @@
-//
-//  GameRoom2.swift
-//  Our_Game
-//
-//  Created by Fai Alharthi on 10/11/1446 AH.
-//
-
 import SwiftUI
 
 var countDownTimer2 = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
 struct GameRoom2: View {
-    
+
     @Environment(\.dismiss) var dismiss
+    @State private var showExitConfirmation = false // ⬅️ حالة البوب أب
+
     let allElements = [
         "Camal", "Kabba", "man", "Dallah", "dates", "Desert",
         "Falcon", "Gecko", "metro", "Misbaha", "plam", "Riyal",
@@ -58,7 +53,7 @@ struct GameRoom2: View {
                                 .stroke(Color(#colorLiteral(red: 0.039, green: 0.584, blue: 0.741, alpha: 1)), lineWidth: 4)
                                 .frame(width: 50, height: 50)
                             Button(action: {
-                                dismiss()
+                                showExitConfirmation = true // ⬅️ تفعيل البوب أب
                             }) {
                                 Image(systemName: "door.right.hand.open")
                                     .resizable()
@@ -258,6 +253,14 @@ struct GameRoom2: View {
             let cards = generateCards(allElements: allElements)
             playerCard = cards.playerCard
             centerCard = cards.centerCard
+        }
+        .alert("هل أنت متأكد من الخروج؟", isPresented: $showExitConfirmation) {
+            Button("نعم", role: .destructive) {
+                dismiss()
+            }
+            Button("لا", role: .cancel) { }
+        } message: {
+            Text("سيتم الخروج من الغرفة.")
         }
     }
 
